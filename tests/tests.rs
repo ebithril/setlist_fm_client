@@ -23,6 +23,7 @@ mod tests {
         }
 
         assert_eq!(found, true);
+        thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
     }
 
     #[tokio::test]
@@ -40,8 +41,24 @@ mod tests {
             }
 
             let setlists = client.get_setlists(&artist.mbid).await.expect("Failed to get setlist");
+            thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
             assert_eq!(setlists.setlist.len(), 1);
             break;
+        }
+    }
+
+    #[tokio::test]
+    async fn api_key_error() {
+        let client = SetlistFMClient::new("bad api key".to_string());
+
+        let result = client.search_artist("anything".to_string()).await;
+        match result {
+            Ok(_) => {
+                assert!(false);
+            },
+            Err(err) => {
+                assert_eq!(err.status, http::StatusCode::FORBIDDEN);
+            }
         }
     }
 }
