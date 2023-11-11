@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
 use std::collections::HashMap;
 use reqwest::header::{HeaderMap, HeaderValue};
 use std::str;
@@ -17,51 +17,51 @@ pub struct SetlistError {
     pub message: String
 }
 
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct Artist {
     pub mbid: String,
     pub name: String,
-    pub sortName: String,
+    pub sort_name: String,
     pub disambiguation: String,
     pub url: String,
 }
 
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Venue {
 }
 
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Tour {
 }
 
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Set {
 }
 
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Setlist {
     pub id: String,
-    pub eventDate: String,
-    pub lastUpdated: String,
+    pub event_date: String,
+    pub last_updated: String,
     pub artist: Artist,
     pub venue: Venue,
     pub tour: Tour,
     pub sets: HashMap<String, Set>
 }
 
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct ArtistSearchResult {
     pub artist: Vec<Artist>,
 }
 
-#[allow(non_snake_case)]
-#[derive(Serialize, Deserialize)]
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct SetlistResult {
     pub setlist: Vec<Setlist>,
 }
