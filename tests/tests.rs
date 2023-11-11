@@ -42,7 +42,7 @@ mod tests {
 
             let setlists = client.get_setlists(&artist.mbid).await.expect("Failed to get setlist");
             thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
-            assert_eq!(setlists.setlist.len(), 1);
+            assert_eq!(setlists.setlist.len(), 20);
             break;
         }
     }

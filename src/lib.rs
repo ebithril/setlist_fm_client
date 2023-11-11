@@ -1,5 +1,4 @@
 use serde::Deserialize;
-use std::collections::HashMap;
 use reqwest::header::{HeaderMap, HeaderValue};
 use std::str;
 use http::StatusCode;
@@ -29,17 +28,60 @@ pub struct Artist {
 
 #[derive(Deserialize)]
 #[serde(rename_all="camelCase")]
+pub struct Coords {
+    pub lat: f64,
+    pub long: f64,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct Country {
+    pub code: String,
+    pub name: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct City {
+    pub id: String,
+    pub name: String,
+    pub state: String,
+    pub state_code: String,
+    pub coords: Coords,
+    pub country: Country,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct Venue {
+    pub id: String,
+    pub name: String,
+    pub city: City,
+    pub url: String,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct Tour {
+    pub name: String,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct Song {
+    pub name: String,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct Set {
+    pub song: Vec<Song>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
+pub struct Sets {
+    pub set: Vec<Set>,
 }
 
 #[derive(Deserialize)]
@@ -51,7 +93,8 @@ pub struct Setlist {
     pub artist: Artist,
     pub venue: Venue,
     pub tour: Tour,
-    pub sets: HashMap<String, Set>
+    pub sets: Sets,
+    pub url: String,
 }
 
 #[derive(Deserialize)]
@@ -101,7 +144,6 @@ impl SetlistFMClient {
         if !result.status().is_success() {
             return Err(SetlistError::new(result.status(), result.text().await.expect("couldn't get text")));
         }
-
 
         Ok(result.json::<SetlistResult>().await.expect("failed to serialize json"))
     }
