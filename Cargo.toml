@@ -11,3 +11,4 @@ tokio = { version = "1", features = ["full"] }
 serde_json = { version = "1" }
 serde = { version = "1", features = ["derive"]}
 http = { version = "0.2" }
+url-search-params = { version = "12" }

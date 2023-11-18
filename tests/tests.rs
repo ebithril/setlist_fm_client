@@ -22,7 +22,7 @@ mod tests {
             break;
         }
 
-        assert_eq!(found, true);
+        assert!(found);
         thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
     }
 
@@ -48,13 +48,22 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn get_user() {
+        let api_key = env::var("API_KEY").expect("Could not find environment var");
+        let client = SetlistFMClient::new(api_key);
+
+        let result = client.get_user("ebithril".to_string()).await.expect("failed to get user");
+        assert_eq!(result.user_id, "ebithril");
+    }
+
+    #[tokio::test]
     async fn api_key_error() {
         let client = SetlistFMClient::new("bad api key".to_string());
 
         let result = client.search_artist("anything".to_string()).await;
         match result {
             Ok(_) => {
-                assert!(false);
+                panic!("This should not return a valid result");
             },
             Err(err) => {
                 assert_eq!(err.status, http::StatusCode::FORBIDDEN);
