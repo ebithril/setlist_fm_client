@@ -5,12 +5,14 @@ mod tests {
     use std::{thread, time};
     use std::env;
 
+    const SLEEP_DURATION: time::Duration = time::Duration::from_millis(600);
+
     #[tokio::test]
     async fn search_artist() {
         let api_key = env::var("API_KEY").expect("Could not find environment var");
         let client = SetlistFMClient::new(api_key);
 
-        thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
+        thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
         let result = client.search_artist("Halestorm".to_string()).await.unwrap();
 
         let mut found = false;
@@ -31,7 +33,7 @@ mod tests {
         let api_key = env::var("API_KEY").expect("Could not find environment var");
         let client = SetlistFMClient::new(api_key);
 
-        thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
+        thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
         let result = client.search_artist("Halestorm".to_string()).await.expect("Failed to find artist");
 
         for artist in &result.artist {
@@ -39,9 +41,8 @@ mod tests {
                 continue;
             }
 
-            thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
+            thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
             let setlists = client.get_setlists(&artist.mbid).await.expect("Failed to get setlist");
-            thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
             assert_eq!(setlists.setlist.len(), 20);
             break;
         }
@@ -52,7 +53,7 @@ mod tests {
         let api_key = env::var("API_KEY").expect("Could not find environment var");
         let client = SetlistFMClient::new(api_key);
 
-        thread::sleep(time::Duration::new(1, 0)); // Basic API key is limited to 2 requests/second
+        thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
         let result = client.get_user("ebithril".to_string()).await.expect("failed to get user");
         assert_eq!(result.user_id, "ebithril");
     }
