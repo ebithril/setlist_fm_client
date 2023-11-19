@@ -86,24 +86,26 @@ pub struct Setlist {
 #[serde(rename_all="camelCase")]
 pub struct ArtistSearchResult {
     pub artist: Vec<Artist>,
+    pub total: i32,
+    pub page: i32,
+    pub items_per_page: i32,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct CitySearchResult {
     pub cities: Vec<City>,
+    pub total: i32,
+    pub page: i32,
+    pub items_per_page: i32,
 }
 
 #[derive(Deserialize)]
 #[serde(rename_all="camelCase")]
 pub struct SetlistResult {
     pub setlist: Vec<Setlist>,
-}
-
-#[derive(Deserialize)]
-#[serde(rename_all="camelCase")]
-pub struct UserResult {
-    pub user_id: String,
-    pub url: String,
+    pub total: i32,
+    pub page: i32,
+    pub items_per_page: i32,
 }
 
