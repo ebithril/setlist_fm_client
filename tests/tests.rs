@@ -4,6 +4,7 @@ mod tests {
     use setlist_fm_client::*;
     use std::{thread, time};
     use std::env;
+    use http::StatusCode;
 
     const SLEEP_DURATION: time::Duration = time::Duration::from_millis(2000);
 
@@ -80,7 +81,9 @@ mod tests {
                 panic!("This should not return a valid result");
             },
             Err(err) => {
-                assert_eq!(err.status, http::StatusCode::FORBIDDEN);
+                match err {
+                    SetlistError::Reqwest(ref err) => assert_eq!(err.status(), Some(StatusCode::FORBIDDEN))
+                }
             }
         }
     }

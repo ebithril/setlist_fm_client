@@ -29,14 +29,12 @@ impl SetlistFMClient {
         let url = format!("https://api.setlist.fm/rest/1.0/{}?{}", endpoint, query_parameters);
         let result = self.client.get(url)
             .send()
-            .await
-            .expect("Failed to search artist");
+            .await?;
 
-        if !result.status().is_success() {
-            return Err(SetlistError::new(result.status(), result.text().await.expect("couldn't get text")));
+        match result.error_for_status() {
+            Ok(res) => Ok(res.json::<T>().await?),
+            Err(err) => Err(SetlistError::from(err))
         }
-
-        Ok(result.json::<T>().await.expect("failed to serialize json"))
     }
 
     pub async fn search_artist(&self, artist_name: String) -> Result<ArtistSearchResult> {
