@@ -11,9 +11,9 @@ pub struct SetlistFMClient {
 }
 
 impl SetlistFMClient {
-    pub fn new(api_key: String) -> Self {
+    pub fn new(api_key: &str) -> Self {
         let mut headers = HeaderMap::new();
-        headers.insert("x-api-key", HeaderValue::from_str(api_key.as_str()).unwrap());
+        headers.insert("x-api-key", HeaderValue::from_str(api_key).unwrap());
         headers.insert("Accept", HeaderValue::from_str("application/json").unwrap());
 
         SetlistFMClient {
@@ -37,27 +37,27 @@ impl SetlistFMClient {
         }
     }
 
-    pub async fn search_artist(&self, artist_name: String) -> Result<ArtistSearchResult> {
+    pub async fn search_artist(&self, artist_name: &str) -> Result<ArtistSearchResult> {
         let params = HashMap::from([
             ("p".to_string(), "1".to_string()),
             ("sort".to_string(), "sortName".to_string()),
-            ("artistName".to_string(), artist_name.clone())
+            ("artistName".to_string(), artist_name.to_string())
         ]);
 
         self.send_request("search/artists", params).await
     }
 
-    pub async fn search_cities(&self, name: String) -> Result<CitySearchResult> {
+    pub async fn search_cities(&self, name: &str) -> Result<CitySearchResult> {
         let params = HashMap::from([
             ("p".to_string(), "1".to_string()),
             ("sort".to_string(), "sortName".to_string()),
-            ("name".to_string(), name.clone())
+            ("name".to_string(), name.to_string())
         ]);
 
         self.send_request("search/cities", params).await
     }
 
-    pub async fn get_setlists(&self, mbid: &String) -> Result<SetlistResult> {
+    pub async fn get_setlists(&self, mbid: &str) -> Result<SetlistResult> {
         let params = HashMap::from([
             ("p".to_string(), "1".to_string())
         ]);

@@ -1,5 +1,4 @@
 use std::fmt;
-use reqwest;
 
 pub type Result<T> = std::result::Result<T, SetlistError>;
 
