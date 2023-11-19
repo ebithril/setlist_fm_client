@@ -49,6 +49,16 @@ impl SetlistFMClient {
         self.send_request("search/artists", params).await
     }
 
+    pub async fn search_cities(&self, name: String) -> Result<CitySearchResult> {
+        let params = HashMap::from([
+            ("p".to_string(), "1".to_string()),
+            ("sort".to_string(), "sortName".to_string()),
+            ("name".to_string(), name.clone())
+        ]);
+
+        self.send_request("search/cities", params).await
+    }
+
     pub async fn get_setlists(&self, mbid: &String) -> Result<SetlistResult> {
         let params = HashMap::from([
             ("p".to_string(), "1".to_string())

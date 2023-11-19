@@ -4,3 +4,4 @@ mod data;
 
 pub use self::error::{SetlistError, Result};
 pub use self::client::SetlistFMClient;
+pub use self::data::*;

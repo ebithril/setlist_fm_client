@@ -90,6 +90,12 @@ pub struct ArtistSearchResult {
 
 #[derive(Deserialize)]
 #[serde(rename_all="camelCase")]
+pub struct CitySearchResult {
+    pub cities: Vec<City>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all="camelCase")]
 pub struct SetlistResult {
     pub setlist: Vec<Setlist>,
 }
@@ -100,5 +106,4 @@ pub struct UserResult {
     pub user_id: String,
     pub url: String,
 }
-
 

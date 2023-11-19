@@ -5,7 +5,7 @@ mod tests {
     use std::{thread, time};
     use std::env;
 
-    const SLEEP_DURATION: time::Duration = time::Duration::from_millis(750);
+    const SLEEP_DURATION: time::Duration = time::Duration::from_millis(2000);
 
     #[tokio::test]
     async fn search_artist() {
@@ -18,6 +18,27 @@ mod tests {
         let mut found = false;
         for artist in &result.artist {
             if artist.name != "Halestorm" {
+                continue;
+            }
+
+            found = true;
+            break;
+        }
+
+        assert!(found);
+    }
+
+    #[tokio::test]
+    async fn search_cities() {
+        let api_key = env::var("API_KEY").expect("Could not find environment var");
+        let client = SetlistFMClient::new(api_key);
+
+        thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
+        let result = client.search_cities("Stockholm".to_string()).await.unwrap();
+
+        let mut found = false;
+        for artist in &result.cities {
+            if artist.name != "Stockholm" {
                 continue;
             }
 
@@ -52,6 +73,7 @@ mod tests {
     async fn api_key_error() {
         let client = SetlistFMClient::new("bad api key".to_string());
 
+        thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
         let result = client.search_artist("anything".to_string()).await;
         match result {
             Ok(_) => {
