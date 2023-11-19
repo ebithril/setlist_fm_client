@@ -6,7 +6,7 @@ mod tests {
     use std::env;
     use http::StatusCode;
 
-    const SLEEP_DURATION: time::Duration = time::Duration::from_millis(500);
+    const SLEEP_DURATION: time::Duration = time::Duration::from_millis(1000);
 
     #[tokio::test]
     async fn search_artist() {
