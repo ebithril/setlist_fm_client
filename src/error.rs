@@ -10,8 +10,7 @@ pub enum SetlistError {
 impl fmt::Display for SetlistError {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Self::Reqwest(ref e) =>
-                write!(f, "{:?}", e)
+            Self::Reqwest(ref e) => write!(f, "{:?}", e),
         }
     }
 }
