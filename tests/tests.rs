@@ -97,6 +97,7 @@ mod tests {
                 SetlistError::Reqwest(ref err) => {
                     assert_eq!(err.status(), Some(StatusCode::FORBIDDEN))
                 }
+                _ => panic!("Unexpected error type"),
             },
         }
     }

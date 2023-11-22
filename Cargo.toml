@@ -13,3 +13,4 @@ serde = { version = "1", features = ["derive"]}
 http = { version = "0.2" }
 url-search-params = { version = "12" }
 derivative = { version = "2.2.0" }
+url = { version = "2.4.1" }

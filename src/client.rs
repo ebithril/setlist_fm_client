@@ -1,8 +1,8 @@
 use derivative::Derivative;
 use reqwest::header::{HeaderMap, HeaderValue};
+use reqwest::Url;
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
-use url_search_params::build_url_search_params;
 
 use crate::data::*;
 use crate::error::*;
@@ -38,15 +38,10 @@ impl SetlistFMClient {
         endpoint: &str,
         params: HashMap<String, String>,
     ) -> Result<T> {
-        let mut query_string = "".to_string();
-        if !params.is_empty() {
-            query_string = format!("?{}", build_url_search_params(params));
-        }
-
-        let url = format!(
-            "https://api.setlist.fm/rest/1.0/{}{}",
-            endpoint, query_string
-        );
+        let url = Url::parse_with_params(
+            &format!("https://api.setlist.fm/rest/1.0/{}", endpoint),
+            params.iter(),
+        )?;
         let result = self.client.get(url).send().await?;
 
         match result.error_for_status() {
