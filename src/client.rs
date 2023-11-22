@@ -1,3 +1,4 @@
+use derivative::Derivative;
 use reqwest::header::{HeaderMap, HeaderValue};
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
@@ -8,6 +9,14 @@ use crate::error::*;
 
 pub struct SetlistFMClient {
     client: reqwest::Client,
+}
+
+#[derive(Derivative)]
+#[derivative(Default)]
+pub struct ArtistSetlistArgs {
+    pub mbid: String,
+    #[derivative(Default(value = "1"))]
+    pub p: u32,
 }
 
 impl SetlistFMClient {
@@ -30,7 +39,7 @@ impl SetlistFMClient {
         params: HashMap<String, String>,
     ) -> Result<T> {
         let mut query_string = "".to_string();
-        if params.len() > 0 {
+        if !params.is_empty() {
             query_string = format!("?{}", build_url_search_params(params));
         }
 
@@ -44,6 +53,18 @@ impl SetlistFMClient {
             Ok(res) => Ok(res.json::<T>().await?),
             Err(err) => Err(SetlistError::from(err)),
         }
+    }
+
+    pub async fn artist(&self, mbid: &str) -> Result<Artist> {
+        self.send_request(&format!("artist/{}", mbid), HashMap::new())
+            .await
+    }
+
+    pub async fn artist_setlists(&self, args: &ArtistSetlistArgs) -> Result<SetlistResult> {
+        let params = HashMap::from([("p".to_string(), args.p.to_string())]);
+
+        self.send_request(&format!("artist/{}/setlists", args.mbid), params)
+            .await
     }
 
     pub async fn search_artist(&self, artist_name: &str) -> Result<ArtistSearchResult> {
@@ -68,18 +89,6 @@ impl SetlistFMClient {
 
     pub async fn search_countries(&self) -> Result<CountrySearchResult> {
         self.send_request("search/countries", HashMap::new()).await
-    }
-
-    pub async fn get_setlists(&self, mbid: &str) -> Result<SetlistResult> {
-        let params = HashMap::from([("p".to_string(), "1".to_string())]);
-
-        self.send_request(&format!("artist/{}/setlists", mbid), params)
-            .await
-    }
-
-    pub async fn get_artist(&self, mbid: &str) -> Result<Artist> {
-        self.send_request(&format!("artist/{}", mbid), HashMap::new())
-            .await
     }
 
     pub async fn get_city(&self, geo_id: &str) -> Result<City> {

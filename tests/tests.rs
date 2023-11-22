@@ -72,7 +72,10 @@ mod tests {
 
             thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
             let setlists = client
-                .get_setlists(&artist.mbid)
+                .artist_setlists(&ArtistSetlistArgs {
+                    mbid: artist.mbid.clone(),
+                    ..Default::default()
+                })
                 .await
                 .expect("Failed to get setlist");
             assert_eq!(setlists.setlist.len(), 20);
@@ -116,7 +119,7 @@ mod tests {
 
             thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
             let artist_res = client
-                .get_artist(&artist.mbid)
+                .artist(&artist.mbid)
                 .await
                 .expect("Failed to get artist");
             assert_eq!(artist_res.name, artist.name);
