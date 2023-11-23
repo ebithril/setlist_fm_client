@@ -62,6 +62,11 @@ impl SetlistFMClient {
             .await
     }
 
+    pub async fn city(&self, geo_id: &str) -> Result<City> {
+        self.send_request(&format!("city/{}", geo_id), HashMap::new())
+            .await
+    }
+
     pub async fn search_artist(&self, artist_name: &str) -> Result<ArtistSearchResult> {
         let params = HashMap::from([
             ("p".to_string(), "1".to_string()),
