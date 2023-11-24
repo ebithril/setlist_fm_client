@@ -11,7 +11,7 @@ mod tests {
     const ARTIST_NAME: &str = "Halestorm";
     const CITY_NAME: &str = "Stockholm";
     const COUNTRY_NAME: &str = "Sweden";
-    const GEO_ID: &str = "3600051000";
+    const GEO_ID: &str = "8126189";
 
     #[tokio::test]
     async fn api_key_error() {
@@ -19,7 +19,7 @@ mod tests {
 
         thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
         let result = client
-            .search_artist(&SearchArtistArgs {
+            .search_artists(&SearchArtistsArgs {
                 artist_name: Some(ARTIST_NAME.to_string()),
                 ..Default::default()
             })
@@ -45,7 +45,7 @@ mod tests {
 
         thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
         let result = client
-            .search_artist(&SearchArtistArgs {
+            .search_artists(&SearchArtistsArgs {
                 artist_name: Some(ARTIST_NAME.to_string()),
                 ..Default::default()
             })
@@ -74,7 +74,7 @@ mod tests {
 
         thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
         let result = client
-            .search_artist(&SearchArtistArgs {
+            .search_artists(&SearchArtistsArgs {
                 artist_name: Some(ARTIST_NAME.to_string()),
                 ..Default::default()
             })
@@ -99,9 +99,7 @@ mod tests {
         }
     }
 
-    // Ignored since I haven't found a valid geo_id
     #[tokio::test]
-    #[ignore]
     async fn city() {
         let api_key = env::var("API_KEY").expect("Could not find environment var");
         let client = SetlistFMClient::new(&api_key);
@@ -119,7 +117,7 @@ mod tests {
 
         thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
         let result = client
-            .search_artist(&SearchArtistArgs {
+            .search_artists(&SearchArtistsArgs {
                 artist_name: Some(ARTIST_NAME.to_string()),
                 ..Default::default()
             })
@@ -139,14 +137,13 @@ mod tests {
         assert!(found);
     }
 
-    // TODO: These need to be rewritten
     #[tokio::test]
     async fn search_cities() {
         let api_key = env::var("API_KEY").expect("Could not find environment var");
         let client = SetlistFMClient::new(&api_key);
 
         thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
-        let result = client.search_cities(CITY_NAME).await.unwrap();
+        let result = client.search_cities(&SearchCitiesArgs{ name: Some(CITY_NAME.to_string()), ..Default::default() }).await.unwrap();
 
         let mut found = false;
         for artist in &result.cities {
@@ -159,26 +156,6 @@ mod tests {
         }
 
         assert!(found);
-    }
-
-    #[tokio::test]
-    async fn get_city() {
-        let api_key = env::var("API_KEY").expect("Could not find environment var");
-        let client = SetlistFMClient::new(&api_key);
-
-        thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
-        let result = client.search_cities(CITY_NAME).await.unwrap();
-
-        for city in &result.cities {
-            if city.name != CITY_NAME {
-                continue;
-            }
-
-            thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
-            let city_res = client.get_city(&city.id).await.expect("Failed to get city");
-            assert_eq!(city_res.name, city.name);
-            break;
-        }
     }
 
     #[tokio::test]

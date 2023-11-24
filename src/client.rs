@@ -36,7 +36,7 @@ pub struct ArtistSetlistArgs {
 
 #[derive(Derivative)]
 #[derivative(Default)]
-pub struct SearchArtistArgs {
+pub struct SearchArtistsArgs {
     pub artist_mbid: Option<String>,
     pub artist_name: Option<String>,
     pub artist_tmid: Option<String>,
@@ -44,6 +44,17 @@ pub struct SearchArtistArgs {
     pub p: u32,
     #[derivative(Default(value = "Sort::SortName"))]
     pub sort: Sort,
+}
+
+#[derive(Derivative)]
+#[derivative(Default)]
+pub struct SearchCitiesArgs {
+    pub country: Option<String>,
+    pub name: Option<String>,
+    pub state: Option<String>,
+    pub state_code: Option<String>,
+    #[derivative(Default(value = "1"))]
+    pub p: u32,
 }
 
 impl SetlistFMClient {
@@ -89,13 +100,12 @@ impl SetlistFMClient {
             .await
     }
 
-    /// Unclear if this works, I don't know how to get a correct geo_id
     pub async fn city(&self, geo_id: &str) -> Result<City> {
         self.send_request(&format!("city/{}", geo_id), HashMap::new())
             .await
     }
 
-    pub async fn search_artist(&self, args: &SearchArtistArgs) -> Result<ArtistSearchResult> {
+    pub async fn search_artists(&self, args: &SearchArtistsArgs) -> Result<ArtistSearchResult> {
         let mut params = HashMap::from([
             ("p".to_string(), args.p.to_string()),
             ("sort".to_string(), args.sort.to_string()),
@@ -125,22 +135,43 @@ impl SetlistFMClient {
         self.send_request("search/artists", params).await
     }
 
-    pub async fn search_cities(&self, name: &str) -> Result<CitySearchResult> {
-        let params = HashMap::from([
+    pub async fn search_cities(&self, args: &SearchCitiesArgs) -> Result<CitySearchResult> {
+        let mut params = HashMap::from([
             ("p".to_string(), "1".to_string()),
-            ("sort".to_string(), "sortName".to_string()),
-            ("name".to_string(), name.to_string()),
         ]);
+
+        if args.name.is_some() {
+            params.insert(
+                "name".to_string(),
+                args.name.as_ref().unwrap().to_string(),
+            );
+        }
+
+        if args.country.is_some() {
+            params.insert(
+                "country".to_string(),
+                args.country.as_ref().unwrap().to_string(),
+            );
+        }
+
+        if args.state.is_some() {
+            params.insert(
+                "state".to_string(),
+                args.state.as_ref().unwrap().to_string(),
+            );
+        }
+
+        if args.state_code.is_some() {
+            params.insert(
+                "statCode".to_string(),
+                args.state_code.as_ref().unwrap().to_string(),
+            );
+        }
 
         self.send_request("search/cities", params).await
     }
 
     pub async fn search_countries(&self) -> Result<CountrySearchResult> {
         self.send_request("search/countries", HashMap::new()).await
-    }
-
-    pub async fn get_city(&self, geo_id: &str) -> Result<City> {
-        self.send_request(&format!("city/{}", geo_id), HashMap::new())
-            .await
     }
 }
