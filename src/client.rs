@@ -1,10 +1,10 @@
 use core::fmt;
 use derivative::Derivative;
+use http_query_params::HttpQueryParams;
 use reqwest::header::{HeaderMap, HeaderValue};
 use reqwest::Url;
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
-use http_query_params::HttpQueryParams;
 
 use crate::data::*;
 use crate::error::*;
@@ -119,7 +119,11 @@ impl SetlistFMClient {
             .await
     }
 
-    pub async fn artist_setlists(&self, mbid: &str, args: &ArtistSetlistArgs) -> Result<SetlistResult> {
+    pub async fn artist_setlists(
+        &self,
+        mbid: &str,
+        args: &ArtistSetlistArgs,
+    ) -> Result<SetlistResult> {
         let params = args.as_map();
 
         self.send_request(&format!("artist/{}/setlists", mbid), params)

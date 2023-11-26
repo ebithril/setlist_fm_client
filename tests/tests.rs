@@ -81,7 +81,7 @@ mod tests {
             .await
             .unwrap();
 
-        for artist in &result.artist { 
+        for artist in &result.artist {
             if artist.name != ARTIST_NAME {
                 continue;
             }
@@ -140,7 +140,13 @@ mod tests {
         let client = SetlistFMClient::new(&api_key);
 
         thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
-        let result = client.search_cities(&SearchCitiesArgs{ name: Some(CITY_NAME.to_string()), ..Default::default() }).await.unwrap();
+        let result = client
+            .search_cities(&SearchCitiesArgs {
+                name: Some(CITY_NAME.to_string()),
+                ..Default::default()
+            })
+            .await
+            .unwrap();
 
         let mut found = false;
         for artist in &result.cities {
