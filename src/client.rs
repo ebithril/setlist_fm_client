@@ -4,6 +4,7 @@ use reqwest::header::{HeaderMap, HeaderValue};
 use reqwest::Url;
 use serde::de::DeserializeOwned;
 use std::collections::HashMap;
+use http_query_params::HttpQueryParams;
 
 use crate::data::*;
 use crate::error::*;
@@ -26,16 +27,17 @@ pub struct SetlistFMClient {
     client: reqwest::Client,
 }
 
-#[derive(Derivative)]
+#[derive(Derivative, HttpQueryParams)]
 #[derivative(Default)]
+#[case(camelCase)]
 pub struct ArtistSetlistArgs {
-    pub mbid: String,
     #[derivative(Default(value = "1"))]
     pub p: u32,
 }
 
-#[derive(Derivative)]
+#[derive(Derivative, HttpQueryParams)]
 #[derivative(Default)]
+#[case(camelCase)]
 pub struct SearchArtistsArgs {
     pub artist_mbid: Option<String>,
     pub artist_name: Option<String>,
@@ -46,8 +48,9 @@ pub struct SearchArtistsArgs {
     pub sort: Sort,
 }
 
-#[derive(Derivative)]
+#[derive(Derivative, HttpQueryParams)]
 #[derivative(Default)]
+#[case(camelCase)]
 pub struct SearchCitiesArgs {
     pub country: Option<String>,
     pub name: Option<String>,
@@ -55,6 +58,29 @@ pub struct SearchCitiesArgs {
     pub state_code: Option<String>,
     #[derivative(Default(value = "1"))]
     pub p: u32,
+}
+
+#[derive(Derivative, HttpQueryParams)]
+#[derivative(Default)]
+#[case(camelCase)]
+pub struct SearchSetlistsArgs {
+    pub artist_mbid: Option<String>,
+    pub artist_name: Option<String>,
+    pub artist_tmid: Option<String>,
+    pub city_id: Option<String>,
+    pub city_name: Option<String>,
+    pub country_code: Option<String>,
+    pub date: Option<String>,
+    pub last_fm: Option<String>,
+    pub last_updated: Option<String>,
+    #[derivative(Default(value = "1"))]
+    pub p: u32,
+    pub state: Option<String>,
+    pub state_code: Option<String>,
+    pub tour_name: Option<String>,
+    pub venue_id: Option<String>,
+    pub venue_name: Option<String>,
+    pub year: Option<String>,
 }
 
 impl SetlistFMClient {
@@ -93,10 +119,10 @@ impl SetlistFMClient {
             .await
     }
 
-    pub async fn artist_setlists(&self, args: &ArtistSetlistArgs) -> Result<SetlistResult> {
-        let params = HashMap::from([("p".to_string(), args.p.to_string())]);
+    pub async fn artist_setlists(&self, mbid: &str, args: &ArtistSetlistArgs) -> Result<SetlistResult> {
+        let params = args.as_map();
 
-        self.send_request(&format!("artist/{}/setlists", args.mbid), params)
+        self.send_request(&format!("artist/{}/setlists", mbid), params)
             .await
     }
 
@@ -106,72 +132,24 @@ impl SetlistFMClient {
     }
 
     pub async fn search_artists(&self, args: &SearchArtistsArgs) -> Result<ArtistSearchResult> {
-        let mut params = HashMap::from([
-            ("p".to_string(), args.p.to_string()),
-            ("sort".to_string(), args.sort.to_string()),
-        ]);
-
-        if args.artist_name.is_some() {
-            params.insert(
-                "artistName".to_string(),
-                args.artist_name.as_ref().unwrap().to_string(),
-            );
-        }
-
-        if args.artist_mbid.is_some() {
-            params.insert(
-                "artistMbid".to_string(),
-                args.artist_mbid.as_ref().unwrap().to_string(),
-            );
-        }
-
-        if args.artist_tmid.is_some() {
-            params.insert(
-                "artistTmid".to_string(),
-                args.artist_tmid.as_ref().unwrap().to_string(),
-            );
-        }
+        let params = args.as_map();
 
         self.send_request("search/artists", params).await
     }
 
     pub async fn search_cities(&self, args: &SearchCitiesArgs) -> Result<CitySearchResult> {
-        let mut params = HashMap::from([
-            ("p".to_string(), "1".to_string()),
-        ]);
-
-        if args.name.is_some() {
-            params.insert(
-                "name".to_string(),
-                args.name.as_ref().unwrap().to_string(),
-            );
-        }
-
-        if args.country.is_some() {
-            params.insert(
-                "country".to_string(),
-                args.country.as_ref().unwrap().to_string(),
-            );
-        }
-
-        if args.state.is_some() {
-            params.insert(
-                "state".to_string(),
-                args.state.as_ref().unwrap().to_string(),
-            );
-        }
-
-        if args.state_code.is_some() {
-            params.insert(
-                "statCode".to_string(),
-                args.state_code.as_ref().unwrap().to_string(),
-            );
-        }
+        let params = args.as_map();
 
         self.send_request("search/cities", params).await
     }
 
     pub async fn search_countries(&self) -> Result<CountrySearchResult> {
         self.send_request("search/countries", HashMap::new()).await
+    }
+
+    pub async fn search_setlists(&self, args: &SearchSetlistsArgs) -> Result<SetlistResult> {
+        let params = args.as_map();
+
+        self.send_request("search/setlists", params).await
     }
 }

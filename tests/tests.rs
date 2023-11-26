@@ -88,10 +88,7 @@ mod tests {
 
             thread::sleep(SLEEP_DURATION); // Basic API key is limited to 2 requests/second
             let setlists = client
-                .artist_setlists(&ArtistSetlistArgs {
-                    mbid: artist.mbid.clone(),
-                    ..Default::default()
-                })
+                .artist_setlists(&artist.mbid, &ArtistSetlistArgs::default())
                 .await
                 .expect("Failed to get setlist");
             assert_eq!(setlists.setlist.len(), 20);
