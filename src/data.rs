@@ -117,3 +117,12 @@ pub struct CountrySearchResult {
     pub page: i32,
     pub items_per_page: i32,
 }
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct VenueSearchResult {
+    pub venue: Vec<Venue>,
+    pub total: i32,
+    pub page: i32,
+    pub items_per_page: i32,
+}

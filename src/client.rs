@@ -83,6 +83,20 @@ pub struct SearchSetlistsArgs {
     pub year: Option<String>,
 }
 
+#[derive(Derivative, HttpQueryParams)]
+#[derivative(Default)]
+#[case(camelCase)]
+pub struct SearchVenuesArgs {
+    pub city_id: Option<String>,
+    pub city_name: Option<String>,
+    pub country: Option<String>,
+    pub name: Option<String>,
+    #[derivative(Default(value = "1"))]
+    pub p: u32,
+    pub state: Option<String>,
+    pub state_code: Option<String>,
+}
+
 impl SetlistFMClient {
     pub fn new(api_key: &str) -> Self {
         let mut headers = HeaderMap::new();
@@ -155,5 +169,11 @@ impl SetlistFMClient {
         let params = args.as_map();
 
         self.send_request("search/setlists", params).await
+    }
+
+    pub async fn search_venues(&self, args: &SearchVenuesArgs) -> Result<VenueSearchResult> {
+        let params = args.as_map();
+
+        self.send_request("search/venues", params).await
     }
 }

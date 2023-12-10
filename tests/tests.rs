@@ -5,10 +5,11 @@ mod tests {
     use std::env;
     use tokio::time;
 
-    const SLEEP_DURATION: time::Duration = time::Duration::from_millis(510);
+    const SLEEP_DURATION: time::Duration = time::Duration::from_millis(750);
 
     // Some constants to search for in the tests
     const ARTIST_NAME: &str = "Halestorm";
+    const VENUE_NAME: &str = "Münchenbryggeriet";
     const CITY_NAME: &str = "Stockholm";
     const COUNTRY_NAME: &str = "Sweden";
     const GEO_ID: &str = "8126189";
@@ -196,5 +197,28 @@ mod tests {
             .unwrap();
 
         assert_eq!(result.setlist.len(), 20);
+    }
+
+    #[tokio::test]
+    async fn search_venues() {
+        let api_key = env::var("API_KEY").expect("Could not find environment var");
+        let client = SetlistFMClient::new(&api_key);
+
+        time::sleep(SLEEP_DURATION).await; // Basic API key is limited to 2 requests/second
+        let result = client
+            .search_venues(&SearchVenuesArgs{name: Some(VENUE_NAME.to_string()), ..Default::default()})
+            .await
+            .unwrap();
+
+        let mut found = false;
+        for venue in result.venue {
+            if venue.name != VENUE_NAME {
+                continue;
+            }
+
+            found = true;
+        }
+
+        assert!(found);
     }
 }
