@@ -77,7 +77,7 @@ pub struct Setlist {
     pub last_updated: String,
     pub artist: Artist,
     pub venue: Venue,
-    pub tour: Tour,
+    pub tour: Option<Tour>,
     pub sets: Sets,
     pub url: String,
 }
