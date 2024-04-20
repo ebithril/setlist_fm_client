@@ -9,9 +9,9 @@ edition = "2021"
 reqwest = { version = "0.11", features = ["json"] }
 tokio = { version = "1", features = ["full"] }
 serde_json = { version = "1" }
-serde = { version = "1", features = ["derive"]}
+serde = { version = "1", features = ["derive"] }
 http = { version = "0.2" }
 url-search-params = { version = "12" }
 derivative = { version = "2.2.0" }
 url = { version = "2.4.1" }
-http_query_params = { git = "https://github.com/ebithril/http_query_params" }
+http_query_params = { version = "0.1.0" }
